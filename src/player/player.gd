@@ -35,6 +35,11 @@ func _physics_process(_delta: float) -> void:
 				height_before_jump = global_position.y
 				gravity = -gravity_strength
 			
+			# switch to 'fall' state if not on the floor
+			if !is_on_floor():
+				_switch_state(STATES.FALL)
+				gravity = gravity_strength
+			
 			$AnimatedSprite.play("idle")
 			
 		STATES.RUN:
@@ -47,7 +52,12 @@ func _physics_process(_delta: float) -> void:
 				_switch_state(STATES.JUMP)
 				height_before_jump = global_position.y
 				gravity = -gravity_strength
-				
+			
+			# switch to 'fall' state if not on the floor
+			if !is_on_floor():
+				_switch_state(STATES.FALL)
+				gravity = gravity_strength
+			
 			velocity = move_input.normalized() * speed
 			
 			$AnimatedSprite.play("run")
