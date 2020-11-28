@@ -73,3 +73,8 @@ valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="HoldTimer" type="Timer" parent="."]
+wait_time = 0.2
+one_shot = true
+[connection signal="timeout" from="HoldTimer" to="." method="_on_HoldTimer_timeout"]

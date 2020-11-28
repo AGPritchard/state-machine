@@ -66,21 +66,25 @@ func _physics_process(_delta: float) -> void:
 				_switch_state(STATES.FALL)
 				gravity = old_gravity
 			
+			# switch to hold state if on a wall
 			if is_on_wall():
 				_switch_state(STATES.HOLD)
 				gravity = 0
+				$HoldTimer.start()
 			
 			velocity = move_input.normalized() * speed
 			
 			$AnimatedSprite.play("jump")
 		
 		STATES.FALL:
+			# switch to idle state if on the floor
 			if is_on_floor():
 				_switch_state(STATES.IDLE)
 			
 			velocity = move_input.normalized() * speed
 		
 		STATES.HOLD:
+			# switch to a jump state if the jump button was pressed
 			if Input.is_action_just_pressed("jump"):
 				_switch_state(STATES.JUMP)
 				height_before_jump = global_position.y
@@ -102,3 +106,9 @@ func _switch_state(new_state: int) -> void:
 			$StateLabel.text = "Falling"
 		STATES.HOLD:
 			$StateLabel.text = "Holding"
+
+func _on_HoldTimer_timeout() -> void:
+	# on timeout if the state is still hold then switch to the fall state
+	if state == STATES.HOLD:
+		_switch_state(STATES.FALL)
+		gravity = old_gravity
