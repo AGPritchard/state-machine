@@ -40,13 +40,13 @@ func _physics_process(_delta: float) -> void:
 			if move_input.length() <= 0:
 				_switch_state(STATES.IDLE)
 			
-			velocity = move_input.normalized() * speed
-			
 			# switch to jump state if jump button is pressed
 			if Input.is_action_just_pressed("jump"):
 				_switch_state(STATES.JUMP)
 				height_before_jump = global_position.y
 				gravity = -gravity
+				
+			velocity = move_input.normalized() * speed
 			
 			# flip sprite depending on direction
 			if horizontal_input < 0:
