@@ -17,12 +17,16 @@ var state: int = STATES.IDLE
 var velocity := Vector2.ZERO
 var height_before_jump := 0.0
 var gravity := gravity_strength
+var old_direction := 1.0
 
 func _physics_process(_delta: float) -> void:
 	velocity = Vector2.ZERO
 	
 	var horizontal_input := Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
 	var move_input := Vector2(horizontal_input, 0)
+	
+	if horizontal_input != 0:
+		old_direction = horizontal_input
 	
 	match state:
 		STATES.IDLE:
@@ -122,7 +126,7 @@ func _physics_process(_delta: float) -> void:
 				gravity = -gravity_strength
 	
 	# flip sprite depending on direction
-	if horizontal_input < 0:
+	if old_direction < 0:
 		$AnimatedSprite.flip_h = true
 	else:
 		$AnimatedSprite.flip_h = false
