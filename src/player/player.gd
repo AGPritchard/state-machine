@@ -6,10 +6,10 @@ enum STATES {
 	JUMP,
 }
 
-export(float) var speed := 200.0
+export(float) var speed := 80.0
+export(float) var gravity := 100.0
 
 var state: int = STATES.IDLE
-
 var velocity := Vector2.ZERO
 
 func _physics_process(_delta: float) -> void:
@@ -36,6 +36,7 @@ func _physics_process(_delta: float) -> void:
 			velocity = move_input.normalized() * speed
 			
 		STATES.JUMP:
-			state = STATES.IDLE
-
+			pass
+	
+	velocity += Vector2.DOWN * gravity
 	velocity = move_and_slide(velocity)
