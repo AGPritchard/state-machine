@@ -14,7 +14,6 @@ export(float) var maximum_jump_height := 40.0
 var state: int = STATES.IDLE
 var velocity := Vector2.ZERO
 var height_before_jump := 0.0
-var horizontal_jump_velocity := Vector2.ZERO
 
 func _physics_process(_delta: float) -> void:
 	velocity = Vector2.ZERO
@@ -33,7 +32,6 @@ func _physics_process(_delta: float) -> void:
 			if Input.is_action_just_pressed("jump"):
 				state = STATES.JUMP
 				$StateLabel.text = "Jumping"
-				horizontal_jump_velocity = Vector2.ZERO
 				height_before_jump = global_position.y
 				gravity = -gravity
 			
@@ -51,7 +49,6 @@ func _physics_process(_delta: float) -> void:
 			if Input.is_action_just_pressed("jump"):
 				state = STATES.JUMP
 				$StateLabel.text = "Jumping"
-				horizontal_jump_velocity = velocity
 				height_before_jump = global_position.y
 				gravity = -gravity
 			
