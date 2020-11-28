@@ -8,10 +8,12 @@ enum STATES {
 
 export(float) var speed := 80.0
 export(float) var gravity := 100.0
+export(float) var maximum_jump_height := 40.0
 
 var state: int = STATES.IDLE
 var velocity := Vector2.ZERO
-
+var height_before_jump := 0.0
+var horizontal_jump_velocity := Vector2.ZERO
 
 func _physics_process(_delta: float) -> void:
 	velocity = Vector2.ZERO
@@ -28,6 +30,9 @@ func _physics_process(_delta: float) -> void:
 			# switch to jump state if jump button is pressed
 			if Input.is_action_just_pressed("jump"):
 				state = STATES.JUMP
+				horizontal_jump_velocity = Vector2.ZERO
+				height_before_jump = global_position.y
+				gravity = -gravity
 			
 			$AnimatedSprite.play("idle")
 			
@@ -38,6 +43,13 @@ func _physics_process(_delta: float) -> void:
 			
 			velocity = move_input.normalized() * speed
 			
+			# switch to jump state if jump button is pressed
+			if Input.is_action_just_pressed("jump"):
+				state = STATES.JUMP
+				horizontal_jump_velocity = velocity
+				height_before_jump = global_position.y
+				gravity = -gravity
+			
 			# flip sprite depending on direction
 			if horizontal_input < 0:
 				$AnimatedSprite.flip_h = true
@@ -47,7 +59,11 @@ func _physics_process(_delta: float) -> void:
 			$AnimatedSprite.play("run")
 			
 		STATES.JUMP:
-			state = STATES.IDLE
+			if global_position.y <= (height_before_jump - maximum_jump_height):
+				state = STATES.IDLE
+				gravity = -gravity
+			
+			velocity = horizontal_jump_velocity.normalized() * speed
 			
 			$AnimatedSprite.play("jump")
 	
