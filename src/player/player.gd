@@ -84,7 +84,12 @@ func _physics_process(_delta: float) -> void:
 				_switch_state(STATES.IDLE)
 			
 			velocity = move_input.normalized() * speed
-		
+			
+			# display first frame of the jump animation
+			$AnimatedSprite.play("jump")
+			$AnimatedSprite.frame = 0
+			$AnimatedSprite.stop()
+			
 		STATES.HOLD:
 			# switch to 'jump' state if the jump button is pressed
 			if Input.is_action_just_pressed("jump"):
