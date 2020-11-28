@@ -15,6 +15,7 @@ export(float) var maximum_jump_height := 40.0
 var state: int = STATES.IDLE
 var velocity := Vector2.ZERO
 var height_before_jump := 0.0
+var old_gravity := gravity
 
 func _physics_process(_delta: float) -> void:
 	velocity = Vector2.ZERO
@@ -32,6 +33,7 @@ func _physics_process(_delta: float) -> void:
 			if Input.is_action_just_pressed("jump"):
 				_switch_state(STATES.JUMP)
 				height_before_jump = global_position.y
+				old_gravity = gravity
 				gravity = -gravity
 			
 			$AnimatedSprite.play("idle")
@@ -45,6 +47,7 @@ func _physics_process(_delta: float) -> void:
 			if Input.is_action_just_pressed("jump"):
 				_switch_state(STATES.JUMP)
 				height_before_jump = global_position.y
+				old_gravity = gravity
 				gravity = -gravity
 				
 			velocity = move_input.normalized() * speed
@@ -61,7 +64,7 @@ func _physics_process(_delta: float) -> void:
 			# switch to idle state if maximum jump height is reached or a collision with a ceiling occurs
 			if global_position.y <= (height_before_jump - maximum_jump_height) or is_on_ceiling():
 				_switch_state(STATES.FALL)
-				gravity = -gravity
+				gravity = old_gravity
 			
 			if is_on_wall():
 				_switch_state(STATES.HOLD)
@@ -81,7 +84,7 @@ func _physics_process(_delta: float) -> void:
 			if Input.is_action_just_pressed("jump"):
 				_switch_state(STATES.JUMP)
 				height_before_jump = global_position.y
-				gravity = -100.0
+				gravity = -old_gravity
 	
 	velocity += Vector2.DOWN * gravity
 	velocity = move_and_slide(velocity, Vector2.UP)
