@@ -6,6 +6,7 @@ enum STATES {
 	JUMP,
 	FALL,
 	HOLD,
+	SLIDE,
 }
 
 export(float) var speed := 80.0
@@ -58,6 +59,11 @@ func _physics_process(_delta: float) -> void:
 				_switch_state(STATES.FALL)
 				gravity = gravity_strength
 			
+			# switch to 'slide' state if on a wall
+			if is_on_wall():
+				_switch_state(STATES.SLIDE)
+				gravity = gravity_strength * 0.8
+			
 			velocity = move_input.normalized() * speed
 			
 			$AnimatedSprite.play("run")
@@ -82,6 +88,12 @@ func _physics_process(_delta: float) -> void:
 			# switch to 'idle' state if on the floor
 			if is_on_floor():
 				_switch_state(STATES.IDLE)
+				gravity = gravity_strength
+			
+			# switch to 'slide' state if on a wall
+			if is_on_wall():
+				_switch_state(STATES.SLIDE)
+				gravity = gravity_strength * 0.8
 			
 			velocity = move_input.normalized() * speed
 			
@@ -91,6 +103,18 @@ func _physics_process(_delta: float) -> void:
 			$AnimatedSprite.stop()
 			
 		STATES.HOLD:
+			# switch to 'jump' state if the jump button is pressed
+			if Input.is_action_just_pressed("jump"):
+				_switch_state(STATES.JUMP)
+				height_before_jump = global_position.y
+				gravity = -gravity_strength
+		
+		STATES.SLIDE:
+			# switch to 'idle' state if on the floor
+			if is_on_floor():
+				_switch_state(STATES.IDLE)
+				gravity = gravity_strength
+			
 			# switch to 'jump' state if the jump button is pressed
 			if Input.is_action_just_pressed("jump"):
 				_switch_state(STATES.JUMP)
@@ -119,9 +143,11 @@ func _switch_state(new_state: int) -> void:
 			$StateLabel.text = "Falling"
 		STATES.HOLD:
 			$StateLabel.text = "Holding"
+		STATES.SLIDE:
+			$StateLabel.text = "Sliding"
 
 func _on_HoldTimer_timeout() -> void:
 	# on timeout if the state is still 'hold' then switch to the 'fall' state
 	if state == STATES.HOLD:
-		_switch_state(STATES.FALL)
+		_switch_state(STATES.SLIDE)
 		gravity = gravity_strength
