@@ -5,6 +5,7 @@ enum STATES {
 	RUN,
 	JUMP,
 	FALL,
+	HOLD,
 }
 
 export(float) var speed := 80.0
@@ -62,6 +63,10 @@ func _physics_process(_delta: float) -> void:
 				_switch_state(STATES.FALL)
 				gravity = -gravity
 			
+			if is_on_wall():
+				_switch_state(STATES.HOLD)
+				gravity = 0
+			
 			velocity = move_input.normalized() * speed
 			
 			$AnimatedSprite.play("jump")
@@ -71,6 +76,12 @@ func _physics_process(_delta: float) -> void:
 				_switch_state(STATES.IDLE)
 			
 			velocity = move_input.normalized() * speed
+		
+		STATES.HOLD:
+			if Input.is_action_just_pressed("jump"):
+				_switch_state(STATES.JUMP)
+				height_before_jump = global_position.y
+				gravity = -100.0
 	
 	velocity += Vector2.DOWN * gravity
 	velocity = move_and_slide(velocity, Vector2.UP)
@@ -86,3 +97,5 @@ func _switch_state(new_state: int) -> void:
 			$StateLabel.text = "Jumping"
 		STATES.FALL:
 			$StateLabel.text = "Falling"
+		STATES.HOLD:
+			$StateLabel.text = "Holding"
