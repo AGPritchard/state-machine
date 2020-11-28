@@ -25,13 +25,11 @@ func _physics_process(_delta: float) -> void:
 		STATES.IDLE:
 			# switch to run state if move_input is detected
 			if move_input.length() > 0:
-				state = STATES.RUN
-				$StateLabel.text = "Running"
+				_switch_state(STATES.RUN)
 			
 			# switch to jump state if jump button is pressed
 			if Input.is_action_just_pressed("jump"):
-				state = STATES.JUMP
-				$StateLabel.text = "Jumping"
+				_switch_state(STATES.JUMP)
 				height_before_jump = global_position.y
 				gravity = -gravity
 			
@@ -40,15 +38,13 @@ func _physics_process(_delta: float) -> void:
 		STATES.RUN:
 			# switch to idle state if move_input is not detected
 			if move_input.length() <= 0:
-				state = STATES.IDLE
-				$StateLabel.text = "Idling"
+				_switch_state(STATES.IDLE)
 			
 			velocity = move_input.normalized() * speed
 			
 			# switch to jump state if jump button is pressed
 			if Input.is_action_just_pressed("jump"):
-				state = STATES.JUMP
-				$StateLabel.text = "Jumping"
+				_switch_state(STATES.JUMP)
 				height_before_jump = global_position.y
 				gravity = -gravity
 			
@@ -63,8 +59,7 @@ func _physics_process(_delta: float) -> void:
 		STATES.JUMP:
 			# switch to idle state if maximum jump height is reached or a collision with a ceiling occurs
 			if global_position.y <= (height_before_jump - maximum_jump_height) or is_on_ceiling():
-				state = STATES.FALL
-				$StateLabel.text = "Falling"
+				_switch_state(STATES.FALL)
 				gravity = -gravity
 			
 			velocity = move_input.normalized() * speed
@@ -73,10 +68,21 @@ func _physics_process(_delta: float) -> void:
 		
 		STATES.FALL:
 			if is_on_floor():
-				state = STATES.IDLE
-				$StateLabel.text = "Idling"
+				_switch_state(STATES.IDLE)
 			
 			velocity = move_input.normalized() * speed
 	
 	velocity += Vector2.DOWN * gravity
 	velocity = move_and_slide(velocity, Vector2.UP)
+
+func _switch_state(new_state: int) -> void:
+	state = new_state
+	match new_state:
+		STATES.IDLE:
+			$StateLabel.text = "Idling"
+		STATES.RUN:
+			$StateLabel.text = "Running"
+		STATES.JUMP:
+			$StateLabel.text = "Jumping"
+		STATES.FALL:
+			$StateLabel.text = "Falling"
