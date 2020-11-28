@@ -25,11 +25,11 @@ func _physics_process(_delta: float) -> void:
 	
 	match state:
 		STATES.IDLE:
-			# switch to run state if move_input is detected
+			# switch to 'run' state if movement is detected
 			if move_input.length() > 0:
 				_switch_state(STATES.RUN)
 			
-			# switch to jump state if jump button is pressed
+			# switch to 'jump' state if jump button is pressed
 			if Input.is_action_just_pressed("jump"):
 				_switch_state(STATES.JUMP)
 				height_before_jump = global_position.y
@@ -39,11 +39,11 @@ func _physics_process(_delta: float) -> void:
 			$AnimatedSprite.play("idle")
 			
 		STATES.RUN:
-			# switch to idle state if move_input is not detected
+			# switch to 'idle' state if movement is not detected
 			if move_input.length() <= 0:
 				_switch_state(STATES.IDLE)
 			
-			# switch to jump state if jump button is pressed
+			# switch to 'jump' state if jump button is pressed
 			if Input.is_action_just_pressed("jump"):
 				_switch_state(STATES.JUMP)
 				height_before_jump = global_position.y
@@ -52,21 +52,15 @@ func _physics_process(_delta: float) -> void:
 				
 			velocity = move_input.normalized() * speed
 			
-			# flip sprite depending on direction
-			if horizontal_input < 0:
-				$AnimatedSprite.flip_h = true
-			else:
-				$AnimatedSprite.flip_h = false
-			
 			$AnimatedSprite.play("run")
 			
 		STATES.JUMP:
-			# switch to idle state if maximum jump height is reached or a collision with a ceiling occurs
+			# switch to 'idle' state if maximum jump height is reached or a collision with a ceiling occurs
 			if global_position.y <= (height_before_jump - maximum_jump_height) or is_on_ceiling():
 				_switch_state(STATES.FALL)
 				gravity = old_gravity
 			
-			# switch to hold state if on a wall
+			# switch to 'hold' state if on a wall
 			if is_on_wall():
 				_switch_state(STATES.HOLD)
 				gravity = 0
@@ -77,18 +71,24 @@ func _physics_process(_delta: float) -> void:
 			$AnimatedSprite.play("jump")
 		
 		STATES.FALL:
-			# switch to idle state if on the floor
+			# switch to 'idle' state if on the floor
 			if is_on_floor():
 				_switch_state(STATES.IDLE)
 			
 			velocity = move_input.normalized() * speed
 		
 		STATES.HOLD:
-			# switch to a jump state if the jump button was pressed
+			# switch to 'jump' state if the jump button is pressed
 			if Input.is_action_just_pressed("jump"):
 				_switch_state(STATES.JUMP)
 				height_before_jump = global_position.y
 				gravity = -old_gravity
+	
+	# flip sprite depending on direction
+	if horizontal_input < 0:
+		$AnimatedSprite.flip_h = true
+	else:
+		$AnimatedSprite.flip_h = false
 	
 	velocity += Vector2.DOWN * gravity
 	velocity = move_and_slide(velocity, Vector2.UP)
@@ -108,7 +108,7 @@ func _switch_state(new_state: int) -> void:
 			$StateLabel.text = "Holding"
 
 func _on_HoldTimer_timeout() -> void:
-	# on timeout if the state is still hold then switch to the fall state
+	# on timeout if the state is still 'hold' then switch to the 'fall' state
 	if state == STATES.HOLD:
 		_switch_state(STATES.FALL)
 		gravity = old_gravity
