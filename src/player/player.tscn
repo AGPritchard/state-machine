@@ -54,3 +54,14 @@ animation = "idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource( 2 )
+
+[node name="StateLabel" type="Label" parent="."]
+margin_left = -32.0
+margin_top = -24.0
+margin_right = 32.0
+margin_bottom = -8.0
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}

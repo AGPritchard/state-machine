@@ -26,10 +26,12 @@ func _physics_process(_delta: float) -> void:
 			# switch to run state if move_input is detected
 			if move_input.length() > 0:
 				state = STATES.RUN
+				$StateLabel.text = "Running"
 			
 			# switch to jump state if jump button is pressed
 			if Input.is_action_just_pressed("jump"):
 				state = STATES.JUMP
+				$StateLabel.text = "Jumping"
 				horizontal_jump_velocity = Vector2.ZERO
 				height_before_jump = global_position.y
 				gravity = -gravity
@@ -40,12 +42,14 @@ func _physics_process(_delta: float) -> void:
 			# switch to idle state if move_input is not detected
 			if move_input.length() <= 0:
 				state = STATES.IDLE
+				$StateLabel.text = "Idling"
 			
 			velocity = move_input.normalized() * speed
 			
 			# switch to jump state if jump button is pressed
 			if Input.is_action_just_pressed("jump"):
 				state = STATES.JUMP
+				$StateLabel.text = "Jumping"
 				horizontal_jump_velocity = velocity
 				height_before_jump = global_position.y
 				gravity = -gravity
@@ -62,6 +66,7 @@ func _physics_process(_delta: float) -> void:
 			# switch to idle state if maximum jump height is reached or a collision with a ceiling occurs
 			if global_position.y <= (height_before_jump - maximum_jump_height) or is_on_ceiling():
 				state = STATES.IDLE
+				$StateLabel.text = "Idling"
 				gravity = -gravity
 			
 			velocity = horizontal_jump_velocity.normalized() * speed
