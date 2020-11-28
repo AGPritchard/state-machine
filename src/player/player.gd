@@ -12,6 +12,7 @@ export(float) var gravity := 100.0
 var state: int = STATES.IDLE
 var velocity := Vector2.ZERO
 
+
 func _physics_process(_delta: float) -> void:
 	velocity = Vector2.ZERO
 	
@@ -23,10 +24,12 @@ func _physics_process(_delta: float) -> void:
 			# switch to run state if move_input is detected
 			if move_input.length() > 0:
 				state = STATES.RUN
-				
+			
 			# switch to jump state if jump button is pressed
 			if Input.is_action_just_pressed("jump"):
 				state = STATES.JUMP
+			
+			$AnimatedSprite.play("idle")
 			
 		STATES.RUN:
 			# switch to idle state if move_input is not detected
@@ -35,8 +38,18 @@ func _physics_process(_delta: float) -> void:
 			
 			velocity = move_input.normalized() * speed
 			
+			# flip sprite depending on direction
+			if horizontal_input < 0:
+				$AnimatedSprite.flip_h = true
+			else:
+				$AnimatedSprite.flip_h = false
+			
+			$AnimatedSprite.play("run")
+			
 		STATES.JUMP:
-			pass
+			state = STATES.IDLE
+			
+			$AnimatedSprite.play("jump")
 	
 	velocity += Vector2.DOWN * gravity
 	velocity = move_and_slide(velocity)
