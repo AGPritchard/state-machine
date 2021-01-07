@@ -1,4 +1,4 @@
-# platformer-movement
+# state-machine
 
 This is a small demo project written for a portfolio to highlight the use of finite state machines.
 
