@@ -22,9 +22,11 @@ var old_direction := 1.0
 func _physics_process(_delta: float) -> void:
 	velocity = Vector2.ZERO
 	
+	# get input
 	var horizontal_input := Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
 	var move_input := Vector2(horizontal_input, 0)
 	
+	# remember old direction
 	if horizontal_input != 0:
 		old_direction = horizontal_input
 	
@@ -131,11 +133,14 @@ func _physics_process(_delta: float) -> void:
 	else:
 		$AnimatedSprite.flip_h = false
 	
+	# apply gravity and move
 	velocity += Vector2.DOWN * gravity
 	velocity = move_and_slide(velocity, Vector2.UP)
 
 func _switch_state(new_state: int) -> void:
 	state = new_state
+	
+	# update debug state label
 	match new_state:
 		STATES.IDLE:
 			$StateLabel.text = "Idling"
